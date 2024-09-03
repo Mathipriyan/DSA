@@ -1,0 +1,84 @@
+#include <stdio.h>
+#define MAX 100
+void push(int stack[], int *top, int value) {
+    if (*top == MAX - 1) {
+        printf("Stack overflow\n");
+        return;
+    }
+    stack[++(*top)] = value;
+}
+int pop(int stack[], int *top) {
+    if (*top < 0) {
+        printf("Stack underflow\n");
+        return -1;
+    }
+    return stack[(*top)--];
+}
+int peek(int stack[], int top) {
+    if (top < 0) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+    return stack[top];
+}
+int isEmpty(int top) {
+    return top == -1;
+}
+void sortStack(int stack[], int *top) {
+    int auxStack[MAX];
+    int top2 = -1; 
+    while (!isEmpty(*top)) {
+        int temp = pop(stack, top);
+        while (!isEmpty(top2) && peek(auxStack, top2) < temp) {
+            push(stack, top, pop(auxStack, &top2));
+        }
+        push(auxStack, &top2, temp);
+    }
+    while (!isEmpty(top2)) {
+        push(stack, top, pop(auxStack, &top2));
+    }
+}
+int main() {
+    int stack[MAX];
+    int top = -1; 
+    int choice;
+    int value;
+    do {
+        printf("1. Push\n2. Pop\n3. Sort Stack\n4. Exit\nEnter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                if (top == MAX - 1) {
+                    printf("Stack overflow\n");
+                } else {
+                    printf("Enter value to push: ");
+                    scanf("%d", &value);
+                    push(stack, &top, value);
+                }
+                break;
+            case 2:
+                value = pop(stack, &top);
+                if (value != -1) {
+                    printf("Popped value: %d\n", value);
+                }
+                break;
+            case 3: 
+                sortStack(stack, &top);
+                if (top == -1) {
+                    printf("Stack is empty.\n");
+                } else {
+                    for (int i = top; i >= 0; i--) {
+                        printf("%d\n", stack[i]);
+                    }
+                }
+                break;
+            case 4:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice\n");
+                break;
+        }
+    } while (choice != 5);
+    return 0;
+}
