@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <ctype.h>
+int top = -1;
+int isempty(int size) {
+    return (top == -1);
+}
+int isfull(int size) {
+    return (top == size - 1);
+}
+void push(char arr[], int size, char element) {
+    if (isfull(size)) {
+        printf("Stack Overflow\n");
+    } else {
+        top++;
+        arr[top] = element;
+    }
+}
+char pop(char arr[], int size) {
+    if (isempty(size)) {
+        return '\0';
+    } else {
+        return arr[top--];
+    }
+}
+char peek(char arr[], int size) {
+    if (isempty(size)) {
+        return '\0';
+    } else {
+        return arr[top];
+    }
+}
+void braces(){
+    int size=100;
+    char s[size];
+    printf("Enter : ");
+    scanf("%s",s);
+    char arr[size];
+    int count=0;
+    for (int i=0;s[i]!='\0';i++){
+        if (s[i]=='('){
+            push(arr,size,s[i]);
+        }
+        else if (s[i]==')'){
+            if (pop(arr,size)=='('){
+                count=count+2;
+            }
+        }
+    }
+    printf("%d",count);
+}
+int main(){
+    braces();
+}
