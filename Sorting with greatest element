@@ -1,48 +1,57 @@
 #include <stdio.h>
 #define MAX 100
-void push(int stack[], int *top, int value) {
-    if (*top == MAX - 1) {
+
+int push(int stack[], int top, int value) {
+    if (top == MAX - 1) {
         printf("Stack overflow\n");
-        return;
+        return top;
     }
-    stack[++(*top)] = value;
+    stack[++top] = value;
+    return top;
 }
-int pop(int stack[], int *top) {
-    if (*top < 0) {
+
+int pop(int stack[], int top) {
+    if (top == -1) {
         printf("Stack underflow\n");
         return -1;
     }
-    return stack[(*top)--];
+    return top - 1;
 }
+
 int peek(int stack[], int top) {
-    if (top < 0) {
+    if (top == -1) {
         printf("Stack is empty\n");
         return -1;
     }
     return stack[top];
 }
+
 int isEmpty(int top) {
     return top == -1;
 }
-void sortStack(int stack[], int *top) {
+
+int sortStack(int stack[], int top) {
     int auxStack[MAX];
-    int top2 = -1; 
-    while (!isEmpty(*top)) {
-        int temp = pop(stack, top);
+    int top2 = -1;
+    while (!isEmpty(top)) {
+        int temp = stack[top--];
         while (!isEmpty(top2) && peek(auxStack, top2) < temp) {
-            push(stack, top, pop(auxStack, &top2));
+            top = push(stack, top, auxStack[top2--]);
         }
-        push(auxStack, &top2, temp);
+        top2 = push(auxStack, top2, temp);
     }
     while (!isEmpty(top2)) {
-        push(stack, top, pop(auxStack, &top2));
+        top = push(stack, top, auxStack[top2--]);
     }
+    return top;
 }
+
 int main() {
     int stack[MAX];
-    int top = -1; 
+    int top = -1;
     int choice;
     int value;
+    
     do {
         printf("1. Push\n2. Pop\n3. Sort Stack\n4. Exit\nEnter your choice: ");
         scanf("%d", &choice);
@@ -53,23 +62,24 @@ int main() {
                 } else {
                     printf("Enter value to push: ");
                     scanf("%d", &value);
-                    push(stack, &top, value);
+                    top = push(stack, top, value);
                 }
                 break;
             case 2:
-                value = pop(stack, &top);
-                if (value != -1) {
+                if (!isEmpty(top)) {
+                    value = stack[top];
+                    top = pop(stack, top);
                     printf("Popped value: %d\n", value);
                 }
                 break;
-            case 3: 
-                sortStack(stack, &top);
-                if (top == -1) {
-                    printf("Stack is empty.\n");
-                } else {
+            case 3:
+                if (!isEmpty(top)) {
+                    top = sortStack(stack, top);
                     for (int i = top; i >= 0; i--) {
                         printf("%d\n", stack[i]);
                     }
+                } else {
+                    printf("Stack is empty.\n");
                 }
                 break;
             case 4:
@@ -79,6 +89,7 @@ int main() {
                 printf("Invalid choice\n");
                 break;
         }
-    } while (choice != 5);
+    } while (choice != 4);
+    
     return 0;
 }
